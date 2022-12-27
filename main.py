@@ -10,11 +10,9 @@ def textname(screen):
     screen.blit(text, (text_x, text_y))
     pygame.draw.rect(screen, (0, 0, 255), (text_x - 10, text_y - 10,
                                            text_w + 20, text_h + 20), 1)
-    text = pygame.font.Font(None, 15).render("yeah, just a game (there soon will be buttons, nevermind)<3",
+    text = pygame.font.Font(None, 30).render("yeah, just a game (there soon will be buttons, nevermind)<3",
                                              True, (255, 255, 255))
     text_x, text_y = width // 2 - text.get_width() // 2, 130
-    text_w = text.get_width()
-    text_h = text.get_height()
     screen.blit(text, (text_x, text_y))
 
 
