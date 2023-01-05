@@ -95,7 +95,7 @@ class Playerjump(pygame.sprite.Sprite):
         self.cur_frame = (self.cur_frame + 1) % len(self.frames)
         self.image = self.frames[self.cur_frame]
         if self.cur_frame < 6:
-            self.rect = self.rect.move(0, -45)
+            self.rect = self.rect.move(0, -55)
         else:
             self.rect = self.rect.move(0, 45)
         if self.cur_frame == 10:
@@ -185,7 +185,7 @@ class HPbar:
 
 if __name__ == '__main__':
     num = randint(1, 5)
-    image = pygame.transform.scale(load_image(f'fon{num}.png'), (1700, 800))
+    image = pygame.transform.scale(load_image(f'fon{num}.jpg'), (1700, 800))
     pl_stay2 = load_image('player_stay.png', -1)
     pl_run2 = load_image('player_run.png', -1)
     pl_jump2 = load_image('player_jump.png', -1)
