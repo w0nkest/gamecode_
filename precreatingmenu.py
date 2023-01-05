@@ -58,7 +58,7 @@ class Button:
         self.alreadyPressed = False
 
         self.fillColors = {
-            'normal': '#00ffff',
+            'normal': '#ffffff',
             'hover': '#666666',
             'pressed': '#333333',
         }
@@ -69,9 +69,8 @@ class Button:
         button_objects.append(self)
 
     def process(self):
-        mousePos = pygame.mouse.get_pos()
         self.buttonSurface.fill((255, 255, 255))
-
+        mousePos = pygame.mouse.get_pos()
         if self.buttonRect.collidepoint(mousePos):
             self.buttonSurface.fill(self.fillColors['hover'])
             if pygame.mouse.get_pressed(num_buttons=3)[0]:
@@ -85,11 +84,11 @@ class Button:
             else:
                 self.alreadyPressed = False
 
-            self.buttonSurface.blit(self.buttonSurf, [
+        self.buttonSurface.blit(self.buttonSurf, [
                 self.buttonRect.width / 2 - self.buttonSurf.get_rect().width / 2,
                 self.buttonRect.height / 2 - self.buttonSurf.get_rect().height / 2
             ])
-            screen.blit(self.buttonSurface, self.buttonRect)
+        screen.blit(self.buttonSurface, self.buttonRect)
 
 
 def playfunc():
@@ -102,7 +101,7 @@ if __name__ == '__main__':
     STARTGAME = False
     FPS = 60
     clock = pygame.time.Clock()
-    width, height = 640, 480
+    width, height = 855, 480
     screen = pygame.display.set_mode((width, height))
     button_objects = []
     start_screen()
