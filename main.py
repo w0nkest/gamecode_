@@ -115,11 +115,16 @@ class Playerjump(pygame.sprite.Sprite):
     def update(self):
         self.cur_frame = (self.cur_frame + 1) % len(self.frames)
         self.image = self.frames[self.cur_frame]
-        if self.cur_frame < 6:
+        x = 3
+        y = 5
+        if self.r:
+            x = 6
+            y = 10
+        if self.cur_frame < x:
             self.rect = self.rect.move(0, -55)
         else:
             self.rect = self.rect.move(0, 45)
-        if self.cur_frame == 10:
+        if self.cur_frame == y:
             self.is_jumping = False
 
     def update_pos(self):
@@ -242,6 +247,8 @@ if __name__ == '__main__':
     pl_run1 = load_image('player1_run.png', -1)
     pl_at1 = load_image('player1_attack.png', -1)
     pl_sit1 = load_image('player1_sit.png', -1)
+    pl_jump1 = load_image('player1_jump.png', -1)
+    player_ju1 = Playerjump(pl_jump1, 6, 1, pl1_pos[0], pl1_pos[1], all_sprites_jump1, False)
     player_sit1 = Playersit(pl_sit1, 5, 1, pl1_pos[0], pl1_pos[1], all_sprites_sit1, False)
     player_at1 = Playerattack(pl_at1, 5, 1, pl1_pos[0], pl1_pos[1], all_sprites_attack1, False)
     player_st1 = Playerstay(pl_stay1, 2, 1, pl1_pos[0], pl1_pos[1], all_sprites_stay1, False)
@@ -288,15 +295,17 @@ if __name__ == '__main__':
         player_ju2.update_pos()
         player_sit2.update_pos()
         player_st2.update_pos()
-        if (keys[pygame.K_w] or player_ju2.is_jumping) and not player_at2.is_attacking:
-            pass
+        if (keys[pygame.K_w] or player_ju1.is_jumping) and not player_at1.is_attacking:
+            player_ju1.is_jumping = True
+            player_ju1.update()
+            all_sprites_jump1.draw(screen)
         elif keys[pygame.K_LALT] or player_at1.is_attacking:
             player_sit1.cur_frame = 0
             player_at1.is_attacking = True
             player_at1.update()
             all_sprites_attack1.draw(screen)
         elif keys[pygame.K_d]:
-            player_sit1.cur_frame = 0
+            player_sit2.cur_frame = 0
             player_ru1.something = 1
             player_sit2.cur_frame = 0
             all_sprites_run1.draw(screen)
@@ -305,7 +314,7 @@ if __name__ == '__main__':
             player_sit1.update()
             all_sprites_sit1.draw(screen)
         elif keys[pygame.K_a]:
-            player_sit1.cur_frame = 0
+            player_sit2.cur_frame = 0
             player_ru1.something = -1
             player_sit2.cur_frame = 0
             all_sprites_run1.draw(screen)
@@ -314,6 +323,7 @@ if __name__ == '__main__':
             player_sit1.cur_frame = 0
             all_sprites_stay1.draw(screen)
             player_st1.update()
+        player_ju1.update_pos()
         player_ru1.update_pos()
         player_st1.update_pos()
         player_at1.update_pos()
