@@ -11,14 +11,14 @@ def terminate():
 def start_screen():
     intro_text = ["игрулька"]
 
-    fon = pygame.transform.scale(load_image('bg_menu_shrek1.jpg'), (width, height))
+    fon = pygame.transform.scale(load_image('bgmenu1.png'), (width, height))
     screen.blit(fon, (0, 0))
     font = pygame.font.Font(None, 50)
     text_coord = 50
-    Button(width // 2 - 150 // 2, 380, 150, 70, 'play', playfunc)
-    Button(30, 380, 150, 70, 'quit', terminate)
+    Button(width-175, 50, 150, 70, 'Играть', playfunc)
+    Button(width-205, height-70, 150, 50, 'выход', terminate)
     for line in intro_text:
-        string_rendered = font.render(line, 1, pygame.Color('white'))
+        string_rendered = font.render(line, True, pygame.Color('white'))
         intro_rect = string_rendered.get_rect()
         text_coord += 10
         intro_rect.top = text_coord
@@ -35,7 +35,7 @@ def start_screen():
         for obj in button_objects:
             obj.process()
         pygame.display.flip()
-        clock.tick(FPS)
+        clock.tick(FPSM)
 
 
 def load_image(name, colorkey=None):
@@ -56,6 +56,7 @@ class Button:
         self.onclickFunction = onclickFunction
         self.onePress = onePress
         self.alreadyPressed = False
+        self.buttonText = buttonText
 
         self.fillColors = {
             'normal': '#ffffff',
@@ -65,16 +66,17 @@ class Button:
 
         self.buttonSurface = pygame.Surface((self.width, self.height))
         self.buttonRect = pygame.Rect(self.x, self.y, self.width, self.height)
-        self.buttonSurf = pygame.font.Font(None, 50).render(buttonText, True, (20, 20, 20))
+        self.buttonSurf = pygame.font.Font(None, 50).render(self.buttonText, True, (255, 255, 255))
         button_objects.append(self)
 
     def process(self):
-        self.buttonSurface.fill((255, 255, 255))
+        # self.buttonSurface.fill((255, 255, 255))
+        self.buttonSurf = pygame.font.Font(None, 50).render(self.buttonText, True, (255, 255, 255))
         mousePos = pygame.mouse.get_pos()
         if self.buttonRect.collidepoint(mousePos):
-            self.buttonSurface.fill(self.fillColors['hover'])
+            self.buttonSurf = pygame.font.Font(None, 50).render(self.buttonText, True, self.fillColors['hover'])
             if pygame.mouse.get_pressed(num_buttons=3)[0]:
-                self.buttonSurface.fill(self.fillColors['pressed'])
+                self.buttonSurf = pygame.font.Font(None, 50).render(self.buttonText, True, self.fillColors['pressed'])
                 if self.onePress:
                     self.onclickFunction()
 
@@ -84,11 +86,12 @@ class Button:
             else:
                 self.alreadyPressed = False
 
-        self.buttonSurface.blit(self.buttonSurf, [
+        screen.blit(self.buttonSurf, (self.x, self.y))
+        '''self.buttonSurface.blit(self.buttonSurf, [
                 self.buttonRect.width / 2 - self.buttonSurf.get_rect().width / 2,
                 self.buttonRect.height / 2 - self.buttonSurf.get_rect().height / 2
-            ])
-        screen.blit(self.buttonSurface, self.buttonRect)
+            ])'''
+        screen.blit(self.buttonSurf, self.buttonRect)
 
 
 def playfunc():
@@ -99,9 +102,9 @@ def playfunc():
 if __name__ == '__main__':
     pygame.init()
     STARTGAME = False
-    FPS = 60
+    FPSM = 60
     clock = pygame.time.Clock()
-    width, height = 855, 480
+    width, height = 1070, 600
     screen = pygame.display.set_mode((width, height))
     button_objects = []
     start_screen()
