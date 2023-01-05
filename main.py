@@ -142,9 +142,9 @@ class Playersit(pygame.sprite.Sprite):
         self.frames = []
         self.cut_sheet(sheet, columns, rows)
         self.cur_frame = -1
+        self.is_sitting = False
         self.image = self.frames[self.cur_frame]
         self.rect = self.rect.move(x, y)
-        self.flag = True
 
     def cut_sheet(self, sheet, columns, rows):
         self.rect = pygame.Rect(0, 0, sheet.get_width() // columns,
@@ -160,8 +160,11 @@ class Playersit(pygame.sprite.Sprite):
         if self.r:
             x = 5
         if self.cur_frame != x:
+            self.is_sitting = False
             self.cur_frame = (self.cur_frame + 1) % len(self.frames)
             self.image = self.frames[self.cur_frame]
+        else:
+            self.is_sitting = True
 
     def update_pos(self):
         if self.r:
@@ -224,6 +227,11 @@ class HPbar:
             else:
                 pygame.draw.rect(screen, pygame.Color('Red'), ((self.x + 5 + 9 * 72) - i * 72,
                                                                self.y + 5, 72, 90))
+        font = pygame.font.Font(None, 100)
+        text = font.render(f"100 / {self.hp * 10}", True, 'White')
+        text_x = self.x + 200
+        text_y = self.y + 20
+        screen.blit(text, (text_x, text_y))
 
 
 if __name__ == '__main__':
@@ -236,7 +244,7 @@ if __name__ == '__main__':
     pl_at2 = load_image('player_attack.png', -1)
     pl2_HPbar = HPbar(950, 15)
     pl1_HPbar = HPbar(15, 15, False)
-    pl2_pos = [1300, 270]
+    pl2_pos = [1300, 257]
     player_at2 = Playerattack(pl_at2, 11, 1, pl2_pos[0], pl2_pos[1], all_sprites_attack2)
     player_sit2 = Playersit(pl_sit2, 6, 1, pl2_pos[0], pl2_pos[1], all_sprites_sit2)
     player_ju2 = Playerjump(pl_jump2, 11, 1, pl2_pos[0], pl2_pos[1], all_sprites_jump2)
@@ -254,6 +262,12 @@ if __name__ == '__main__':
     player_st1 = Playerstay(pl_stay1, 2, 1, pl1_pos[0], pl1_pos[1], all_sprites_stay1, False)
     player_ru1 = Playerrun(pl_run1, 8, 1, pl1_pos[0], pl1_pos[1], all_sprites_run1, False)
     clock = pygame.time.Clock()
+    font = pygame.font.Font(None, 150)
+    text = font.render("VS", True, (255, 200, 0))
+    text1 = font.render('VS', True, (250, 100, 0))
+    text_x = 780
+    text_y = 20
+    safe_zone = 220
     fps = 9
 
     running = True
@@ -262,6 +276,7 @@ if __name__ == '__main__':
             if event.type == pygame.QUIT:
                 running = False
         screen.blit(image, (0, 0))
+        screen.blit(text, (text_x, text_y))
         pl1_HPbar.render(screen)
         pl2_HPbar.render(screen)
         keys = pygame.key.get_pressed()
@@ -273,6 +288,8 @@ if __name__ == '__main__':
             player_at2.is_attacking = True
             all_sprites_attack2.draw(screen)
             player_at2.update()
+            if abs(pl1_pos[0] - pl2_pos[0]) < safe_zone and player_at2.cur_frame == 6 and not player_sit1.is_sitting:
+                pl1_HPbar.hp -= 1
         elif keys[pygame.K_RIGHT]:
             player_ru2.something = -1
             player_sit2.cur_frame = 0
@@ -304,6 +321,8 @@ if __name__ == '__main__':
             player_at1.is_attacking = True
             player_at1.update()
             all_sprites_attack1.draw(screen)
+            if abs(pl1_pos[0] - pl2_pos[0]) < safe_zone and player_at1.cur_frame == 4 and not player_sit2.is_sitting:
+                pl2_HPbar.hp -= 1
         elif keys[pygame.K_d]:
             player_sit2.cur_frame = 0
             player_ru1.something = 1
