@@ -1,10 +1,12 @@
 import pygame
-from random import randint
+from random import randint, choice
 from tools import load_image
 
 
 pygame.init()
 size = width, height = 1700, 800
+GRAVITY = 10
+screen_rect = (0, 0, width, height)
 screen = pygame.display.set_mode(size)
 all_sprites_stay2 = pygame.sprite.Group()
 all_sprites_run2 = pygame.sprite.Group()
@@ -17,6 +19,8 @@ all_sprites_run1 = pygame.sprite.Group()
 all_sprites_jump1 = pygame.sprite.Group()
 all_sprites_sit1 = pygame.sprite.Group()
 all_sprites_attack1 = pygame.sprite.Group()
+
+all_sprites_blood = pygame.sprite.Group()
 
 
 class Playerstay(pygame.sprite.Sprite):
@@ -227,13 +231,44 @@ class HPbar:
             else:
                 pygame.draw.rect(screen, pygame.Color('Red'), ((self.x + 5 + 9 * 72) - i * 72,
                                                                self.y + 5, 72, 90))
-        font = pygame.font.Font(None, 100)
-        text = font.render(f"100 / {self.hp * 10}", True, 'White')
+        hp_font = pygame.font.Font(None, 100)
+        hp_text = hp_font.render(f"100 / {self.hp * 10}", True, 'White')
         if self.is_right:
-            text = font.render(f"{self.hp * 10} / 100", True, 'White')
-        text_x = self.x + 200
-        text_y = self.y + 20
-        screen.blit(text, (text_x, text_y))
+            hp_text = hp_font.render(f"{self.hp * 10} / 100", True, 'White')
+        hp_text_x = self.x + 200
+        hp_text_y = self.y + 20
+        screen.blit(hp_text, (hp_text_x, hp_text_y))
+
+
+class Blood(pygame.sprite.Sprite):
+    fire = [load_image("blood.png", -1)]
+    for scale in (5, 10, 20):
+        fire.append(pygame.transform.scale(fire[0], (scale, scale)))
+
+    def __init__(self, pos, dx, dy):
+        super().__init__(all_sprites_blood)
+        self.image = choice(self.fire)
+        self.rect = self.image.get_rect()
+        self.velocity = [dx, dy]
+        self.rect.x, self.rect.y = pos
+        self.gravity = GRAVITY
+
+    def update(self):
+        self.velocity[1] += self.gravity
+        self.rect.x += self.velocity[0]
+        self.rect.y += self.velocity[1]
+        if not self.rect.colliderect(screen_rect):
+            self.kill()
+
+
+def create_particles(position, is_r=False):
+    particle_count = 5
+    x, y = -100, 5
+    if is_r:
+        x, y = -5, 100
+    numbers = range(x, y)
+    for _ in range(particle_count):
+        Blood(position, choice(numbers), choice(numbers))
 
 
 if __name__ == '__main__':
@@ -297,6 +332,7 @@ if __name__ == '__main__':
             player_at2.update()
             if abs(pl1_pos[0] - pl2_pos[0]) < safe_zone + 25 and player_at2.cur_frame == 6 \
                     and not player_sit1.is_sitting:
+                create_particles((pl1_pos[0] + 100, pl1_pos[1] + 80), is_r=True)
                 pl1_HPbar.hp -= 1
         elif keys[pygame.K_RIGHT] and pl2_pos[0] < 1450:
             player_ru2.something = -1
@@ -331,6 +367,7 @@ if __name__ == '__main__':
             all_sprites_attack1.draw(screen)
             if abs(pl1_pos[0] - pl2_pos[0]) < safe_zone + 25 and player_at1.cur_frame == 4 \
                     and not player_sit2.is_sitting:
+                create_particles((pl1_pos[0] + 220, pl1_pos[1] + 80))
                 pl2_HPbar.hp -= 1
         elif keys[pygame.K_d] and pl1_pos[0] < 1450 and abs(pl1_pos[0] - pl2_pos[0]) > safe_zone:
             player_sit2.cur_frame = 0
@@ -351,6 +388,8 @@ if __name__ == '__main__':
             player_sit1.cur_frame = 0
             all_sprites_stay1.draw(screen)
             player_st1.update()
+        all_sprites_blood.update()
+        all_sprites_blood.draw(screen)
         player_ju1.update_pos()
         player_ru1.update_pos()
         player_st1.update_pos()
