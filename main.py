@@ -265,8 +265,11 @@ if __name__ == '__main__':
     player_ru1 = Playerrun(pl_run1, 8, 1, pl1_pos[0], pl1_pos[1], all_sprites_run1, False)
     clock = pygame.time.Clock()
     font = pygame.font.Font(None, 150)
+    font1 = pygame.font.Font(None, 100)
     text = font.render("VS", True, (255, 200, 0))
     text1 = font.render('VS', True, (250, 100, 0))
+    name = font1.render('Akira', True, 'White')
+    name1 = font1.render('Cody', True, 'White')
     text_x = 780
     text_y = 20
     safe_zone = 220
@@ -279,6 +282,8 @@ if __name__ == '__main__':
                 running = False
         screen.blit(image, (0, 0))
         screen.blit(text, (text_x, text_y))
+        screen.blit(name1, (15, 115))
+        screen.blit(name, (1500, 115))
         pl1_HPbar.render(screen)
         pl2_HPbar.render(screen)
         keys = pygame.key.get_pressed()
