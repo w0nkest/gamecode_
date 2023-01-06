@@ -229,6 +229,8 @@ class HPbar:
                                                                self.y + 5, 72, 90))
         font = pygame.font.Font(None, 100)
         text = font.render(f"100 / {self.hp * 10}", True, 'White')
+        if self.is_right:
+            text = font.render(f"{self.hp * 10} / 100", True, 'White')
         text_x = self.x + 200
         text_y = self.y + 20
         screen.blit(text, (text_x, text_y))
@@ -288,9 +290,10 @@ if __name__ == '__main__':
             player_at2.is_attacking = True
             all_sprites_attack2.draw(screen)
             player_at2.update()
-            if abs(pl1_pos[0] - pl2_pos[0]) < safe_zone and player_at2.cur_frame == 6 and not player_sit1.is_sitting:
+            if abs(pl1_pos[0] - pl2_pos[0]) < safe_zone + 25 and player_at2.cur_frame == 6 \
+                    and not player_sit1.is_sitting:
                 pl1_HPbar.hp -= 1
-        elif keys[pygame.K_RIGHT]:
+        elif keys[pygame.K_RIGHT] and pl2_pos[0] < 1450:
             player_ru2.something = -1
             player_sit2.cur_frame = 0
             all_sprites_run2.draw(screen)
@@ -298,7 +301,7 @@ if __name__ == '__main__':
         elif keys[pygame.K_DOWN]:
             player_sit2.update()
             all_sprites_sit2.draw(screen)
-        elif keys[pygame.K_LEFT]:
+        elif keys[pygame.K_LEFT] and 0 < pl1_pos[0] and abs(pl1_pos[0] - pl2_pos[0]) > safe_zone:
             player_ru2.something = 1
             player_sit2.cur_frame = 0
             all_sprites_run2.draw(screen)
@@ -321,9 +324,10 @@ if __name__ == '__main__':
             player_at1.is_attacking = True
             player_at1.update()
             all_sprites_attack1.draw(screen)
-            if abs(pl1_pos[0] - pl2_pos[0]) < safe_zone and player_at1.cur_frame == 4 and not player_sit2.is_sitting:
+            if abs(pl1_pos[0] - pl2_pos[0]) < safe_zone + 25 and player_at1.cur_frame == 4 \
+                    and not player_sit2.is_sitting:
                 pl2_HPbar.hp -= 1
-        elif keys[pygame.K_d]:
+        elif keys[pygame.K_d] and pl1_pos[0] < 1450 and abs(pl1_pos[0] - pl2_pos[0]) > safe_zone:
             player_sit2.cur_frame = 0
             player_ru1.something = 1
             player_sit2.cur_frame = 0
@@ -332,7 +336,7 @@ if __name__ == '__main__':
         elif keys[pygame.K_s]:
             player_sit1.update()
             all_sprites_sit1.draw(screen)
-        elif keys[pygame.K_a]:
+        elif keys[pygame.K_a] and 0 < pl1_pos[0]:
             player_sit2.cur_frame = 0
             player_ru1.something = -1
             player_sit2.cur_frame = 0
