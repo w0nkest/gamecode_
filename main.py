@@ -164,10 +164,8 @@ class Playersit(pygame.sprite.Sprite):
         if self.r:
             x = 5
         if self.cur_frame != x:
-            self.is_sitting = False
             self.cur_frame = (self.cur_frame + 1) % len(self.frames)
             self.image = self.frames[self.cur_frame]
-        else:
             self.is_sitting = True
 
     def update_pos(self):
@@ -272,8 +270,15 @@ def create_particles(position, is_r=False):
 
 
 if __name__ == '__main__':
-    num = randint(1, 5)
-    image = pygame.transform.scale(load_image(f'fon{num}.jpg'), (1700, 800))
+    pygame.display.set_caption('Name of game')
+    num_fon = randint(1, 5)
+    num_music = randint(1, 3)
+    Cody_pain = pygame.mixer.Sound('data/pain2.mp3')
+    Akira_pain = pygame.mixer.Sound('data/pain1.mp3')
+    pygame.mixer.music.load(f'data/m{num_music}.mp3')
+    pygame.mixer.music.play(-1)
+    pygame.mixer.music.set_volume(0.1)
+    image = pygame.transform.scale(load_image(f'fon{num_fon}.jpg'), (1700, 800))
     pl_stay2 = load_image('player_stay.png', -1)
     pl_run2 = load_image('player_run.png', -1)
     pl_jump2 = load_image('player_jump.png', -1)
@@ -307,7 +312,7 @@ if __name__ == '__main__':
     name1 = font1.render('Cody', True, 'White')
     text_x = 780
     text_y = 20
-    safe_zone = 220
+    safe_zone = 230
     fps = 9
 
     running = True
@@ -323,18 +328,22 @@ if __name__ == '__main__':
         pl2_HPbar.render(screen)
         keys = pygame.key.get_pressed()
         if (keys[pygame.K_UP] or player_ju2.is_jumping) and not player_at2.is_attacking:
+            player_sit1.is_sitting = False
             player_ju2.is_jumping = True
             player_ju2.update()
             all_sprites_jump2.draw(screen)
-        elif keys[pygame.K_RALT] or player_at2.is_attacking:
+        elif keys[pygame.K_RCTRL] or player_at2.is_attacking:
+            player_sit2.is_sitting = False
             player_at2.is_attacking = True
             all_sprites_attack2.draw(screen)
             player_at2.update()
             if abs(pl1_pos[0] - pl2_pos[0]) < safe_zone + 25 and player_at2.cur_frame == 6 \
                     and not player_sit1.is_sitting:
+                Cody_pain.play()
                 create_particles((pl1_pos[0] + 100, pl1_pos[1] + 80), is_r=True)
                 pl1_HPbar.hp -= 1
         elif keys[pygame.K_RIGHT] and pl2_pos[0] < 1450:
+            player_sit2.is_sitting = False
             player_ru2.something = -1
             player_sit2.cur_frame = 0
             all_sprites_run2.draw(screen)
@@ -343,11 +352,13 @@ if __name__ == '__main__':
             player_sit2.update()
             all_sprites_sit2.draw(screen)
         elif keys[pygame.K_LEFT] and 0 < pl1_pos[0] and abs(pl1_pos[0] - pl2_pos[0]) > safe_zone:
+            player_sit2.is_sitting = False
             player_ru2.something = 1
             player_sit2.cur_frame = 0
             all_sprites_run2.draw(screen)
             player_ru2.update()
         else:
+            player_sit2.is_sitting = False
             player_sit2.cur_frame = 0
             all_sprites_stay2.draw(screen)
             player_st2.update()
@@ -357,16 +368,19 @@ if __name__ == '__main__':
         player_sit2.update_pos()
         player_st2.update_pos()
         if (keys[pygame.K_w] or player_ju1.is_jumping) and not player_at1.is_attacking:
+            player_sit1.is_sitting = False
             player_ju1.is_jumping = True
             player_ju1.update()
             all_sprites_jump1.draw(screen)
         elif keys[pygame.K_LALT] or player_at1.is_attacking:
+            player_sit1.is_sitting = False
             player_sit1.cur_frame = 0
             player_at1.is_attacking = True
             player_at1.update()
             all_sprites_attack1.draw(screen)
             if abs(pl1_pos[0] - pl2_pos[0]) < safe_zone + 25 and player_at1.cur_frame == 4 \
                     and not player_sit2.is_sitting:
+                Akira_pain.play()
                 create_particles((pl1_pos[0] + 220, pl1_pos[1] + 80))
                 pl2_HPbar.hp -= 1
         elif keys[pygame.K_d] and pl1_pos[0] < 1450 and abs(pl1_pos[0] - pl2_pos[0]) > safe_zone:
@@ -376,15 +390,18 @@ if __name__ == '__main__':
             all_sprites_run1.draw(screen)
             player_ru1.update()
         elif keys[pygame.K_s]:
+            player_sit1.is_sitting = False
             player_sit1.update()
             all_sprites_sit1.draw(screen)
         elif keys[pygame.K_a] and 0 < pl1_pos[0]:
+            player_sit1.is_sitting = False
             player_sit2.cur_frame = 0
             player_ru1.something = -1
             player_sit2.cur_frame = 0
             all_sprites_run1.draw(screen)
             player_ru1.update()
         else:
+            player_sit1.is_sitting = False
             player_sit1.cur_frame = 0
             all_sprites_stay1.draw(screen)
             player_st1.update()
