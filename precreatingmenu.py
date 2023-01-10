@@ -1,6 +1,7 @@
 import pygame
 import sys
 import os
+import time
 
 
 def terminate():
@@ -15,14 +16,14 @@ def start_screen():
     screen.blit(fon, (0, 0))
     font = pygame.font.Font(None, 50)
     text_coord = 50
-    Button(width-175, 50, 150, 70, 'Играть', playfunc)
-    Button(width-205, height-70, 150, 50, 'выход', terminate)
+    Button(width - int(175 * (width / 1070)), int(50 * (height / 600)), 150, 70, 'Играть', playfunc)
+    Button(width - int(205 * (width / 1070)), height - int((70 * (height / 600))), 150, 50, 'выход', terminate)
     for line in intro_text:
         string_rendered = font.render(line, True, pygame.Color('white'))
         intro_rect = string_rendered.get_rect()
         text_coord += 10
         intro_rect.top = text_coord
-        intro_rect.x = width//2-intro_rect.width//2
+        intro_rect.x = width // 2 - intro_rect.width // 2
         text_coord += intro_rect.height
         screen.blit(string_rendered, intro_rect)
 
@@ -34,6 +35,39 @@ def start_screen():
                 return
         for obj in button_objects:
             obj.process()
+        pygame.display.flip()
+        clock.tick(FPSM)
+
+
+def rules_screen():
+    intro_text = ["СВОДКА ПРАВИЛ"]
+
+    fon = pygame.transform.scale(load_image('pixelroad_bg2.jpg'), (width, height))
+    screen.blit(fon, (0, 0))
+    font = pygame.font.SysFont('comicsansms', 40)
+    string_rendered = font.render(intro_text[0], 1, (252, 40, 71))
+    intro_rect = string_rendered.get_rect()
+    intro_rect.top = 50
+    intro_rect.x = width // 2 - string_rendered.get_width() // 2
+    text_coord = intro_rect.height + 50
+    screen.blit(string_rendered, intro_rect)
+    for line in intro_text[1:]:
+        string_rendered = font.render(line, 1, pygame.Color('white'))
+        intro_rect = string_rendered.get_rect()
+        text_coord += 10
+        intro_rect.top = text_coord
+        intro_rect.x = 10
+        text_coord += intro_rect.height
+        screen.blit(string_rendered, intro_rect)
+
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                terminate()
+            elif event.type == pygame.KEYDOWN or \
+                    event.type == pygame.MOUSEBUTTONDOWN or \
+                    int(time.time() - timerules) >= 7:
+                return
         pygame.display.flip()
         clock.tick(FPSM)
 
@@ -108,5 +142,6 @@ if __name__ == '__main__':
     screen = pygame.display.set_mode((width, height))
     button_objects = []
     start_screen()
-
+    timerules = time.time()
+    rules_screen()
     print(100)
