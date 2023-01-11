@@ -9,6 +9,7 @@ def terminate():
     sys.exit()
 
 
+# menu screen
 def start_screen():
     intro_text = ["игрулька"]
 
@@ -39,24 +40,44 @@ def start_screen():
         clock.tick(FPSM)
 
 
+# rules screen function
 def rules_screen():
-    intro_text = ["СВОДКА ПРАВИЛ"]
+    intro_text = ["СВОДКА ПРАВИЛ",
+                  "(нажмите в любом месте окна для продолжения)", "", ""
+                  'Используйте "W", "A", "S", "D" для управления движением персонажем слева, "leftALT" для его атаки.',
+                  'Используйте стрелочки для управления движением персонажа справа, "rightALT" для его атаки.',
+                  'Проигрывает игрок, у которого закончилось здоровье.', '', '', '', 'Удачи!'
+                  ]
 
     fon = pygame.transform.scale(load_image('pixelroad_bg2.jpg'), (width, height))
     screen.blit(fon, (0, 0))
-    font = pygame.font.SysFont('comicsansms', 40)
-    string_rendered = font.render(intro_text[0], 1, (252, 40, 71))
+
+    # head text of rules screen
+    mainfont = pygame.font.SysFont('comicsansms', 40)
+    font = pygame.font.SysFont('comicsansms', 20)
+    string_rendered = mainfont.render(intro_text[0], True, (252, 0, 0))
     intro_rect = string_rendered.get_rect()
     intro_rect.top = 50
     intro_rect.x = width // 2 - string_rendered.get_width() // 2
     text_coord = intro_rect.height + 50
     screen.blit(string_rendered, intro_rect)
-    for line in intro_text[1:]:
-        string_rendered = font.render(line, 1, pygame.Color('white'))
+    heightmaintext = string_rendered.get_height()
+
+    # tip to skip rules screen
+    string_rendered = font.render(intro_text[1], True, (252, 40, 71))
+    intro_rect = string_rendered.get_rect()
+    intro_rect.top = 50 + heightmaintext
+    intro_rect.x = width // 2 - string_rendered.get_width() // 2
+    text_coord += intro_rect.height
+    screen.blit(string_rendered, intro_rect)
+
+    # rules text
+    for line in intro_text[2:]:
+        string_rendered = font.render(line, True, (0, 0, 0))
         intro_rect = string_rendered.get_rect()
         text_coord += 10
         intro_rect.top = text_coord
-        intro_rect.x = 10
+        intro_rect.x = width // 2 - string_rendered.get_width() // 2
         text_coord += intro_rect.height
         screen.blit(string_rendered, intro_rect)
 
@@ -66,13 +87,13 @@ def rules_screen():
                 terminate()
             elif event.type == pygame.KEYDOWN or \
                     event.type == pygame.MOUSEBUTTONDOWN or \
-                    int(time.time() - timerules) >= 7:
+                    int(time.time() - timerules) >= 10:
                 return
         pygame.display.flip()
         clock.tick(FPSM)
 
 
-def load_image(name, colorkey=None):
+def load_image(name):
     fullname = os.path.join('data', name)
     if not os.path.isfile(fullname):
         print(f"Файл с изображением '{fullname}' не найден")
@@ -82,11 +103,11 @@ def load_image(name, colorkey=None):
 
 
 class Button:
-    def __init__(self, x, y, width, height, buttonText='Button', onclickFunction=None, onePress=False):
+    def __init__(self, x, y, width_b, height_b, buttonText='Button', onclickFunction=None, onePress=False):
         self.x = x
         self.y = y
-        self.width = width
-        self.height = height
+        self.width = width_b
+        self.height = height_b
         self.onclickFunction = onclickFunction
         self.onePress = onePress
         self.alreadyPressed = False
