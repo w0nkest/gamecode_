@@ -370,7 +370,7 @@ if __name__ == '__main__':
         txt2 = time // 1000 % 60
         if txt2 < 10:
             txt2 = '0' + str(txt2)
-        text = font.render(f'{txt1}:{txt2}', True, (255, 200, 0))
+        text = font.render(f'{txt1}:{txt2}', True, (255, 200, 0))  # <---- итоговое время можно взять отсюда
         screen.blit(text, (text_x, text_y))
         screen.blit(name1, (15, 115))
         screen.blit(name, (1500, 115))
@@ -476,10 +476,10 @@ if __name__ == '__main__':
             player_st1.update_pos()
             player_at1.update_pos()
             player_sit1.update_pos()
+            time += clock.get_time()
         all_sprites_blood.update()
         all_sprites_blood.draw(screen)
         clock.tick(fps)
-        time += clock.get_time()
         pygame.display.flip()
     pygame.quit()
 
