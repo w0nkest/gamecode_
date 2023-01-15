@@ -250,16 +250,16 @@ class HPbar:
         self.is_right = right
 
     def render(self, screen):
-        pygame.draw.rect(screen, pygame.Color('Grey'), (self.x, self.y, 730, 100), 5)
-        pygame.draw.rect(screen, pygame.Color('Green'), (self.x + 5, self.y + 5, 720, 90))
+        pygame.draw.rect(screen, pygame.Color('Grey'), (self.x, self.y, 680, 100), 5)
+        pygame.draw.rect(screen, pygame.Color('Green'), (self.x + 5, self.y + 5, 670, 90))
         if self.hp < 0:
             self.hp = 0
         for i in range(10 - self.hp):
             if self.is_right:
-                pygame.draw.rect(screen, pygame.Color('Red'), (self.x + 5 + i * 72, self.y + 5, 72, 90))
+                pygame.draw.rect(screen, pygame.Color('Red'), (self.x + 5 + i * 67, self.y + 5, 67, 90))
             else:
-                pygame.draw.rect(screen, pygame.Color('Red'), ((self.x + 5 + 9 * 72) - i * 72,
-                                                               self.y + 5, 72, 90))
+                pygame.draw.rect(screen, pygame.Color('Red'), ((self.x + 5 + 9 * 67) - i * 67,
+                                                               self.y + 5, 67, 90))
         hp_font = pygame.font.Font(None, 100)
         hp_text = hp_font.render(f"100 / {self.hp * 10}", True, 'White')
         if self.is_right:
@@ -315,35 +315,42 @@ if __name__ == '__main__':
     pl_jump2 = load_image('player_jump.png', -1)
     pl_sit2 = load_image('player_sit.png', -1)
     pl_at2 = load_image('player_attack.png', -1)
-    pl2_HPbar = HPbar(950, 15)
+
+    pl2_HPbar = HPbar(1000, 15)
     pl1_HPbar = HPbar(15, 15, False)
+
     pl2_pos = [1300, 257]
+
     player_at2 = Playerattack(pl_at2, 11, 1, pl2_pos[0], pl2_pos[1], all_sprites_attack2)
     player_sit2 = Playersit(pl_sit2, 6, 1, pl2_pos[0], pl2_pos[1], all_sprites_sit2)
     player_ju2 = Playerjump(pl_jump2, 11, 1, pl2_pos[0], pl2_pos[1], all_sprites_jump2)
     player_st2 = Playerstay(pl_stay2, 10, 1, pl2_pos[0], pl2_pos[1], all_sprites_stay2)
     player_ru2 = Playerrun(pl_run2, 11, 1, pl2_pos[0], pl2_pos[1], all_sprites_run2)
+
     pl1_pos = [100, 300]
+
     pl_stay1 = load_image('player1_stay.png', -1)
     pl_run1 = load_image('player1_run.png', -1)
     pl_at1 = load_image('player1_attack.png', -1)
     pl_sit1 = load_image('player1_sit.png', -1)
     pl_jump1 = load_image('player1_jump.png', -1)
     pl1_death = load_image('cody_death.png', -1)
+
     player_de1 = Playerdeath(pl1_death, 6, 1, pl1_pos[0], pl1_pos[1], all_sprites_cody_death)
     player_ju1 = Playerjump(pl_jump1, 6, 1, pl1_pos[0], pl1_pos[1], all_sprites_jump1, False)
     player_sit1 = Playersit(pl_sit1, 5, 1, pl1_pos[0], pl1_pos[1], all_sprites_sit1, False)
     player_at1 = Playerattack(pl_at1, 5, 1, pl1_pos[0], pl1_pos[1], all_sprites_attack1, False)
     player_st1 = Playerstay(pl_stay1, 2, 1, pl1_pos[0], pl1_pos[1], all_sprites_stay1, False)
     player_ru1 = Playerrun(pl_run1, 8, 1, pl1_pos[0], pl1_pos[1], all_sprites_run1, False)
+
     clock = pygame.time.Clock()
+    time = 0
+
     font = pygame.font.Font(None, 150)
     font1 = pygame.font.Font(None, 100)
-    text = font.render("VS", True, (255, 200, 0))
-    text1 = font.render('VS', True, (250, 100, 0))
     name = font1.render('Akira', True, 'White')
     name1 = font1.render('Cody', True, 'White')
-    text_x = 780
+    text_x = 715
     text_y = 20
     safe_zone = 230
     fps = 9
@@ -357,6 +364,13 @@ if __name__ == '__main__':
             if event.type == pygame.QUIT:
                 running = False
         screen.blit(image, (0, 0))
+        txt1 = time // 1000 // 60
+        if txt1 < 10:
+            txt1 = '0' + str(txt1)
+        txt2 = time // 1000 % 60
+        if txt2 < 10:
+            txt2 = '0' + str(txt2)
+        text = font.render(f'{txt1}:{txt2}', True, (255, 200, 0))
         screen.blit(text, (text_x, text_y))
         screen.blit(name1, (15, 115))
         screen.blit(name, (1500, 115))
@@ -366,6 +380,7 @@ if __name__ == '__main__':
         if Cody_is_win:
             all_sprites_stay1.draw(screen)
             player_st1.update()
+            print(time)
         elif Akira_is_win:
             all_sprites_stay2.draw(screen)
             player_st2.update()
@@ -464,6 +479,7 @@ if __name__ == '__main__':
         all_sprites_blood.update()
         all_sprites_blood.draw(screen)
         clock.tick(fps)
+        time += clock.get_time()
         pygame.display.flip()
     pygame.quit()
 
