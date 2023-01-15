@@ -22,7 +22,10 @@ all_sprites_attack1 = pygame.sprite.Group()
 
 all_sprites_blood = pygame.sprite.Group()
 
+all_sprites_heart = pygame.sprite.Group()
+
 all_sprites_cody_death = pygame.sprite.Group()
+all_sprites_akira_death = pygame.sprite.Group()
 
 
 class Playerstay(pygame.sprite.Sprite):
@@ -214,12 +217,12 @@ class Playerattack(pygame.sprite.Sprite):
 
 
 class Playerdeath(pygame.sprite.Sprite):
-    def __init__(self, sheet, columns, rows, x, y, sprite_group):
+    def __init__(self, sheet, columns, rows, x, y, sprite_group, right=True):
         super().__init__(sprite_group)
         self.frames = []
         self.cut_sheet(sheet, columns, rows)
         self.cur_frame = 0
-        self.is_attacking = False
+        self.is_right = right
         self.image = self.frames[self.cur_frame]
         self.rect = self.rect.move(x, y)
 
@@ -235,11 +238,15 @@ class Playerdeath(pygame.sprite.Sprite):
     def update(self):
         if self.cur_frame != 5:
             self.cur_frame = (self.cur_frame + 1) % len(self.frames)
-            self.rect = self.rect.move(-80, 0)
+            if not self.is_right:
+                self.rect = self.rect.move(-80, 0)
         self.image = self.frames[self.cur_frame]
 
     def update_pos(self):
-        self.rect = self.rect.move(pl1_pos[0] - self.rect[0], pl1_pos[1] - self.rect[1])
+        x = 0
+        if self.is_right:
+            x = 120
+        self.rect = self.rect.move(pl1_pos[0] - self.rect[0] + x, pl1_pos[1] - self.rect[1])
 
 
 class HPbar:
@@ -290,6 +297,17 @@ class Blood(pygame.sprite.Sprite):
             self.kill()
 
 
+class HP10(pygame.sprite.Sprite):
+    heart = load_image('10hp.png', -1)
+
+    def __init__(self):
+        super().__init__(all_sprites_heart)
+        self.image = HP10.heart
+        self.rect = self.image.get_rect()
+        self.mask = pygame.mask.from_surface(self.image)
+        self.rect.bottom = height
+
+
 def create_particles(position, is_r=False):
     particle_count = 5
     x, y = -100, 5
@@ -306,6 +324,7 @@ if __name__ == '__main__':
     num_music = randint(1, 3)
     Cody_pain = pygame.mixer.Sound('data/pain2.mp3')
     Akira_pain = pygame.mixer.Sound('data/pain1.mp3')
+    poof = pygame.mixer.Sound('data/poof.mp3')
     pygame.mixer.music.load(f'data/m{num_music}.mp3')
     pygame.mixer.music.play(-1)
     pygame.mixer.music.set_volume(0.2)
@@ -315,6 +334,7 @@ if __name__ == '__main__':
     pl_jump2 = load_image('player_jump.png', -1)
     pl_sit2 = load_image('player_sit.png', -1)
     pl_at2 = load_image('player_attack.png', -1)
+    pl_de2 = load_image('booom.png', -1)
 
     pl2_HPbar = HPbar(1000, 15)
     pl1_HPbar = HPbar(15, 15, False)
@@ -326,6 +346,7 @@ if __name__ == '__main__':
     player_ju2 = Playerjump(pl_jump2, 11, 1, pl2_pos[0], pl2_pos[1], all_sprites_jump2)
     player_st2 = Playerstay(pl_stay2, 10, 1, pl2_pos[0], pl2_pos[1], all_sprites_stay2)
     player_ru2 = Playerrun(pl_run2, 11, 1, pl2_pos[0], pl2_pos[1], all_sprites_run2)
+    player_de2 = Playerdeath(pl_de2, 3, 2, pl2_pos[0], pl2_pos[1], all_sprites_akira_death)
 
     pl1_pos = [100, 300]
 
@@ -336,7 +357,7 @@ if __name__ == '__main__':
     pl_jump1 = load_image('player1_jump.png', -1)
     pl1_death = load_image('cody_death.png', -1)
 
-    player_de1 = Playerdeath(pl1_death, 6, 1, pl1_pos[0], pl1_pos[1], all_sprites_cody_death)
+    player_de1 = Playerdeath(pl1_death, 6, 1, pl1_pos[0], pl1_pos[1], all_sprites_cody_death, False)
     player_ju1 = Playerjump(pl_jump1, 6, 1, pl1_pos[0], pl1_pos[1], all_sprites_jump1, False)
     player_sit1 = Playersit(pl_sit1, 5, 1, pl1_pos[0], pl1_pos[1], all_sprites_sit1, False)
     player_at1 = Playerattack(pl_at1, 5, 1, pl1_pos[0], pl1_pos[1], all_sprites_attack1, False)
@@ -380,7 +401,9 @@ if __name__ == '__main__':
         if Cody_is_win:
             all_sprites_stay1.draw(screen)
             player_st1.update()
-            print(time)
+            if player_de2.cur_frame != 5:
+                all_sprites_akira_death.draw(screen)
+                player_de2.update()
         elif Akira_is_win:
             all_sprites_stay2.draw(screen)
             player_st2.update()
@@ -403,6 +426,7 @@ if __name__ == '__main__':
                     create_particles((pl1_pos[0] + 100, pl1_pos[1] + 80), is_r=True)
                     pl1_HPbar.hp -= 1
                     if pl1_HPbar.hp == 0:
+
                         Akira_is_win = True
                         fps = 7
             elif keys[pygame.K_RIGHT] and pl2_pos[0] < 1450:
@@ -430,6 +454,7 @@ if __name__ == '__main__':
             player_ju2.update_pos()
             player_sit2.update_pos()
             player_st2.update_pos()
+            player_de2.update_pos()
             if (keys[pygame.K_w] or player_ju1.is_jumping) and not player_at1.is_attacking:
                 player_sit1.is_sitting = False
                 player_ju1.is_jumping = True
@@ -447,6 +472,7 @@ if __name__ == '__main__':
                     create_particles((pl1_pos[0] + 220, pl1_pos[1] + 80))
                     pl2_HPbar.hp -= 1
                     if pl2_HPbar.hp == 0:
+                        poof.play()
                         Cody_is_win = True
             elif keys[pygame.K_d] and pl1_pos[0] < 1450 and abs(pl1_pos[0] - pl2_pos[0]) > safe_zone:
                 player_sit2.cur_frame = 0
