@@ -1,17 +1,13 @@
 import pygame
 from random import randint, choice
-import os
 import time
 import sys
+from tools import load_image
 
 
-def load_image(name, Colorkey=None):
-    fullname = os.path.join('data', name)
-    if not os.path.isfile(fullname):
-        print(f"Файл с изображением '{fullname}' не найден")
-        sys.exit()
-    image = pygame.image.load(fullname)
-    return image
+pygame.init()
+width, height = 1070, 600
+screen = pygame.display.set_mode((width, height))
 
 
 class Playerstay(pygame.sprite.Sprite):
@@ -526,6 +522,7 @@ if __name__ == '__main__':
 
     clock = pygame.time.Clock()
     time = 0
+    counter = 10
 
     font = pygame.font.Font(None, 150)
     font1 = pygame.font.Font(None, 100)
@@ -565,11 +562,17 @@ if __name__ == '__main__':
             if player_de2.cur_frame != 5:
                 all_sprites_akira_death.draw(screen)
                 player_de2.update()
+            elif counter == 0:
+                break
+            counter -= 1
         elif Akira_is_win:
             all_sprites_stay2.draw(screen)
             player_st2.update()
             all_sprites_cody_death.draw(screen)
             player_de1.update()
+            counter -= 1
+            if counter == 0:
+                break
         else:
             if (keys[pygame.K_UP] or player_ju2.is_jumping) and not player_at2.is_attacking:
                 player_sit1.is_sitting = False
@@ -668,4 +671,3 @@ if __name__ == '__main__':
         clock.tick(fps)
         pygame.display.flip()
     pygame.quit()
-
