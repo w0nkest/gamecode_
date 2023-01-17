@@ -14,7 +14,6 @@ def load_image(name, Colorkey=None):
     return image
 
 
-
 class Playerstay(pygame.sprite.Sprite):
     def __init__(self, sheet, columns, rows, x, y, sprite_group, right=True):
         super().__init__(sprite_group)
