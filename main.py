@@ -92,6 +92,8 @@ class Playerjump(pygame.sprite.Sprite):
         if right:
             self.r = right
             self.mask = pygame.mask.from_surface(self.frames[6])
+        else:
+            self.mask = pygame.mask.from_surface(self.frames[3])
         self.cur_frame = 0
         self.image = self.frames[self.cur_frame]
         self.rect = self.rect.move(x, y)
@@ -288,6 +290,7 @@ class HP10(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__(all_sprites_heart)
         self.image = HP10.heart
+        self.is_active = True
         self.rect = self.image.get_rect()
         self.mask = pygame.mask.from_surface(self.image)
         self.rect.bottom = height
@@ -497,6 +500,7 @@ if __name__ == '__main__':
 
     pl2_HPbar = HPbar(1000, 15)
     pl1_HPbar = HPbar(15, 15, False)
+    hp10 = HP10()
 
     pl2_pos = [1300, 257]
 
@@ -523,6 +527,7 @@ if __name__ == '__main__':
     player_st1 = Playerstay(pl_stay1, 2, 1, pl1_pos[0], pl1_pos[1], all_sprites_stay1, False)
     player_ru1 = Playerrun(pl_run1, 8, 1, pl1_pos[0], pl1_pos[1], all_sprites_run1, False)
 
+    timer = 10000
     time = 0
     counter = 10
 
@@ -557,6 +562,10 @@ if __name__ == '__main__':
         screen.blit(name, (1500, 115))
         pl1_HPbar.render(screen)
         pl2_HPbar.render(screen)
+        if timer > 0:
+            hp10.is_active = False
+            timer -= 1
+        else:
         keys = pygame.key.get_pressed()
         if Cody_is_win:
             all_sprites_stay1.draw(screen)
@@ -581,6 +590,8 @@ if __name__ == '__main__':
                 player_ju2.is_jumping = True
                 player_ju2.update()
                 all_sprites_jump2.draw(screen)
+                if pygame.sprite.collide_mask(player_ju2, hp10):
+                    pl2_HPbar += 1
             elif keys[pygame.K_RCTRL] or player_at2.is_attacking:
                 player_sit2.is_sitting = False
                 player_at2.is_attacking = True
@@ -667,6 +678,8 @@ if __name__ == '__main__':
             player_st1.update_pos()
             player_at1.update_pos()
             player_sit1.update_pos()
+            if hp10.is_active:
+                all_sprites_heart.draw(screen)
             time += clock.get_time()
         all_sprites_blood.update()
         all_sprites_blood.draw(screen)
