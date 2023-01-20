@@ -532,6 +532,7 @@ if __name__ == '__main__':
     timer = 100
     time = 0
     counter = 10
+    is_pause = False
 
     font = pygame.font.Font(None, 150)
     font1 = pygame.font.Font(None, 100)
@@ -551,7 +552,13 @@ if __name__ == '__main__':
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
-        screen.blit(image, (0, 0))
+        keys = pygame.key.get_pressed()
+        if keys[pygame.K_ESCAPE]:
+            is_pause = not is_pause
+        if is_pause:
+            screen.fill('black')
+        else:
+            screen.blit(image, (0, 0))
         txt1 = time // 1000 // 60
         if txt1 < 10:
             txt1 = '0' + str(txt1)
