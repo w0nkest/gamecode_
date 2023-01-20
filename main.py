@@ -89,6 +89,9 @@ class Playerjump(pygame.sprite.Sprite):
         self.r = right
         self.frames = []
         self.cut_sheet(sheet, columns, rows)
+        if right:
+            self.r = right
+            self.mask = pygame.mask.from_surface(self.frames[6])
         self.cur_frame = 0
         self.image = self.frames[self.cur_frame]
         self.rect = self.rect.move(x, y)
@@ -520,7 +523,6 @@ if __name__ == '__main__':
     player_st1 = Playerstay(pl_stay1, 2, 1, pl1_pos[0], pl1_pos[1], all_sprites_stay1, False)
     player_ru1 = Playerrun(pl_run1, 8, 1, pl1_pos[0], pl1_pos[1], all_sprites_run1, False)
 
-    clock = pygame.time.Clock()
     time = 0
     counter = 10
 
