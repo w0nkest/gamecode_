@@ -12,6 +12,33 @@ width, height = 1070, 600
 screen = pygame.display.set_mode((width, height))
 
 
+def winscreen(name):
+    intro_text = [f'{name} is win!',
+                  'Congratulations!']
+
+    fon = pygame.transform.scale(load_image('endscreenbg.jpg'), (width, height))
+    screen.blit(fon, (0, 0))
+    font = pygame.font.SysFont('comicsansms', 50)
+    text_coord = 50
+
+    for line in intro_text:
+        string_rendered = font.render(line, True, pygame.Color('white'))
+        intro_rect = string_rendered.get_rect()
+        text_coord += 50
+        intro_rect.top = text_coord
+        intro_rect.x = 80
+        text_coord += intro_rect.height
+        screen.blit(string_rendered, intro_rect)
+
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                terminate()
+
+        pygame.display.flip()
+        clock.tick(FPSM)
+
+
 class Playerstay(pygame.sprite.Sprite):
     def __init__(self, sheet, columns, rows, x, y, sprite_group, right=True):
         super().__init__(sprite_group)
@@ -401,7 +428,7 @@ def rules_screen():
     intro_text = ["СВОДКА ПРАВИЛ",
                   "(нажмите в любом месте окна для продолжения)", "", "",
                   'Используйте "W", "A", "S", "D" для управления движением персонажем слева, "leftALT" для его атаки.',
-                  'Используйте стрелочки для управления движением персонажа справа, "rightALT" для его атаки.',
+                  'Используйте стрелочки для управления движением персонажа справа, "rightCTRL" для его атаки.',
                   'Проигрывает игрок, у которого закончилось здоровье.', '', '', '', 'Удачи!'
                   ]
     fon = pygame.transform.scale(load_image('pixelroad_bg2.jpg'), (width, height))
@@ -701,4 +728,12 @@ if __name__ == '__main__':
         all_sprites_blood.draw(screen)
         clock.tick(fps)
         pygame.display.flip()
+
+    width, height = 1070, 600
+    screen = pygame.display.set_mode((width, height))
+    if Akira_is_win:
+        winscreen('Akira')
+    else:
+        winscreen('Cody')
+
     pygame.quit()
