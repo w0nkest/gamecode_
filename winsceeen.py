@@ -51,4 +51,4 @@ if __name__ == '__main__':
     width, height = 1070, 600
     screen = pygame.display.set_mode((width, height))
     button_objects = []
-    winscreen('Cock')
+    winscreen('Cody')

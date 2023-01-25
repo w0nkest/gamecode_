@@ -1,5 +1,4 @@
 import random
-
 import pygame
 from random import randint, choice
 import time
@@ -13,20 +12,22 @@ screen = pygame.display.set_mode((width, height))
 
 
 def winscreen(name):
-    intro_text = [f'{name} is win!',
-                  'Congratulations!']
+    intro_text = [f'{name} победил!',
+                  'Поздравляем!',
+                  f'Самый короткий матч: {at} cекунд'
+                  ]
 
     fon = pygame.transform.scale(load_image('endscreenbg.jpg'), (width, height))
     screen.blit(fon, (0, 0))
-    font = pygame.font.SysFont('comicsansms', 50)
+    font = pygame.font.SysFont('comicsansms', 40)
     text_coord = 50
 
     for line in intro_text:
         string_rendered = font.render(line, True, pygame.Color('white'))
         intro_rect = string_rendered.get_rect()
-        text_coord += 50
+        text_coord += 40
         intro_rect.top = text_coord
-        intro_rect.x = 80
+        intro_rect.x = 50
         text_coord += intro_rect.height
         screen.blit(string_rendered, intro_rect)
 
@@ -728,6 +729,10 @@ if __name__ == '__main__':
         all_sprites_blood.draw(screen)
         clock.tick(fps)
         pygame.display.flip()
+    with open('restime.txt') as f:
+        at = min(int(txt2), int(f.read()))
+    with open('restime.txt', 'w') as f:
+        f.write(str(at))
 
     width, height = 1070, 600
     screen = pygame.display.set_mode((width, height))
