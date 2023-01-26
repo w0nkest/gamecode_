@@ -1,4 +1,6 @@
-import pygame, os, sys
+import pygame
+import os
+import sys
 
 
 def terminate():
@@ -13,7 +15,6 @@ def load_image(name):
         sys.exit()
     image = pygame.image.load(fullname)
     return image
-
 
 
 def winscreen(name):
